@@ -4,6 +4,7 @@ module.exports = {
   getRecipes,
   getShoppingList,
   getInstructions,
+  getRecipesByIngredients,
 };
 
 function getRecipes() {
@@ -27,5 +28,29 @@ function getShoppingList(id) {
 
 function getInstructions(id) {
   // return a list of step by step instructions for preparing a recipe
-  return db("recipes");
+  return db
+    .select("steps.instruction", "steps.step_number")
+    .from("steps")
+    .join("recipes", "recipes.id", "=", "steps.recipes_id")
+    .where({ "recipes.id": id })
+    .orderBy("steps.step_number");
+}
+
+function getRecipesByIngredients(id) {
+  return db
+    .select("recipes.name")
+    .from("recipes")
+    .join(
+      "recipe_ingredients",
+      "recipe_ingredients.recipes_id",
+      "=",
+      "recipes.id"
+    )
+    .join(
+      "ingredients",
+      "ingredients.id",
+      "=",
+      "recipe_ingredients.ingredients_id"
+    )
+    .where({ "ingredients.id": id });
 }

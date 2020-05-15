@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id/shoppingList", (req, res) => {
   const { id } = req.params;
 
   Recipes.getShoppingList(id)
@@ -29,6 +29,24 @@ router.get("/:id", (req, res) => {
     })
     .catch((err) => {
       res.status(500).json({ message: "Failed to get your recipe" });
+    });
+});
+
+router.get("/:id/instructions", (req, res) => {
+  const { id } = req.params;
+
+  Recipes.getInstructions(id)
+    .then((steps) => {
+      if (steps) {
+        res.json(steps);
+      } else {
+        res
+          .status(404)
+          .json({ message: "Could not find steps with given id." });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ message: "Failed to get steps" });
     });
 });
 
